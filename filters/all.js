@@ -14,14 +14,6 @@ const SPRING_CLOUD_STREAM_VERSION = '3.0.7.RELEASE';
 const SOLACE_HOST = 'tcp://localhost:55555';
 const SOLACE_DEFAULT = 'default';
 
-function getType(type, format) {
-  let typeObject = typeMap.get(type).get(format);
-  if (typeObject === undefined) {
-    typeObject = typeMap.get(type).get(undefined);
-  }
-  return typeObject;
-}
-
 const stringMap = new Map();
 stringMap.set('date',{javaType: 'java.time.LocalDate', printFormat: '%s', sample: '2000-12-31'});
 stringMap.set('date-time',{javaType: 'java.time.OffsetDateTime', printFormat: '%s', sample: '2000-12-31T23:59:59+01:00'});
@@ -51,6 +43,14 @@ typeMap.set('integer', integerMap);
 typeMap.set('null', nullMap);
 typeMap.set('number', numberMap);
 typeMap.set('string', stringMap);
+
+function getType(type, format) {
+  let typeObject = typeMap.get(type).get(format);
+  if (typeObject === undefined) {
+    typeObject = typeMap.get(type).get(undefined);
+  }
+  return typeObject;
+}
 
 class SCSFunction {
   get publishBindingName() {
