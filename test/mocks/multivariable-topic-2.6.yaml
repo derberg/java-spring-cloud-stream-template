@@ -1,0 +1,79 @@
+asyncapi: 2.6.0
+id: 'urn:expense-reporting-integration'
+info:
+  title: ExpenseReportingIntegrationApplication
+  version: 0.0.1
+  description: >-
+    Application for handling expense reporting integration with multivariable
+    topics
+  contact:
+    name: API Support
+    url: 'https://example.com/support'
+    email: support@example.com
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+servers:
+  development:
+    url: 'localhost:8080'
+    protocol: http
+    description: Development server
+defaultContentType: application/json
+tags:
+  - name: billing
+    description: Billing related operations
+  - name: receipts
+    description: Receipt management operations
+components:
+  schemas:
+    RideReceipt:
+      type: object
+      title: This schema is irrelevant
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+        currency:
+          type: string
+      required:
+        - id
+        - amount
+  messages:
+    BillingReceiptCreated:
+      payload:
+        $ref: '#/components/schemas/RideReceipt'
+      schemaFormat: application/vnd.aai.asyncapi+json;version=2.0.0
+      contentType: application/json
+channels:
+  'acme/billing/receipts/{receipt_id}/created/{version}/regions/{region}/chargify/{ride_id}':
+    subscribe:
+      operationId: receiveBillingReceipt
+      bindings:
+        solace:
+          bindingVersion: 0.1.0
+          destinations:
+            - destinationType: topic
+      message:
+        payload:
+          $ref: '#/components/schemas/RideReceipt'
+        schemaFormat: application/vnd.aai.asyncapi+json;version=2.0.0
+        contentType: application/json
+    parameters:
+      version:
+        schema:
+          type: string
+      receipt_id:
+        schema:
+          type: string
+      ride_id:
+        schema:
+          type: string
+      region:
+        schema:
+          type: string
+          enum:
+            - US
+            - UK
+            - CA
+            - MX
